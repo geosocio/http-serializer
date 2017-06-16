@@ -1,0 +1,22 @@
+{
+    "name": "geosocio/serialize-response",
+    "description": "Serializes a Controller Response",
+    "type": "library",
+    "license": "LGPL-3",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+          "GeoSocio\\SerializeResponse\\": "src/"
+        }
+    },
+    "require": {
+        "symfony/http-foundation": "^3.3",
+        "symfony/security": "^3.3",
+        "symfony/http-kernel": "^3.3",
+        "symfony/serializer": "^3.3"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.0"
+    }
+}
