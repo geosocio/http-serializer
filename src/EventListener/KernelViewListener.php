@@ -87,8 +87,7 @@ class KernelViewListener
 
         $response = new Response(
             $this->serializer->serialize($result, $request->getRequestFormat()),
-            $status,
-            $headers
+            $status
         );
         $event->setResponse($response);
 
