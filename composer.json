@@ -11,10 +11,10 @@
         }
     },
     "require": {
-        "symfony/http-foundation": "^3.3",
-        "symfony/security": "^3.3",
-        "symfony/http-kernel": "^3.3",
-        "symfony/serializer": "^3.3"
+        "symfony/http-foundation": "^3.0",
+        "symfony/security": "^3.0",
+        "symfony/http-kernel": "^3.0",
+        "symfony/serializer": "^3.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.0"
