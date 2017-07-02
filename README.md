@@ -1,5 +1,5 @@
-# Serialize Response
-Serializes a Controller Response.
+# Http Serializer
+Serializes a Controller Request & Response.
 
 ## Example
 This controller's response would get serialized into the same format of the

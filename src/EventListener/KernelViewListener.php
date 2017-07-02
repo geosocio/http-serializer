@@ -1,13 +1,11 @@
 <?php
 
-namespace GeoSocio\SerializeResponse\EventListener;
+namespace GeoSocio\HttpSerializer\EventListener;
 
-use GeoSocio\SerializeResponse\Serializer\UserGroupsInterface;
+use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -28,14 +26,9 @@ class KernelViewListener
     protected $normalizer;
 
     /**
-     * @var TokenStorageInterface
+     * @var GroupLoaderInterface
      */
-    protected $tokenStorage;
-
-    /**
-     * @var string[]
-     */
-    protected $defaultGroups;
+    protected $loader;
 
     /**
      * Creates the Event Listener.
@@ -43,13 +36,11 @@ class KernelViewListener
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
-        TokenStorageInterface $tokenStorage,
-        array $defaultGroups = []
+        GroupLoaderInterface $loader
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
-        $this->tokenStorage = $tokenStorage;
-        $this->defaultGroups = $defaultGroups;
+        $this->loader = $loader;
     }
 
     /**
@@ -62,15 +53,22 @@ class KernelViewListener
         $request = $event->getRequest();
         $result = $event->getControllerResult();
 
-        $status = 200;
+        // If the event already has a response, do not override it.
+        if (!$event->hasResponse()) {
+            return $event->getResponse();
+        }
+
+        $status = Response::HTTP_OK;
         switch ($request->getMethod()) {
             case Request::METHOD_POST:
-                $status = 201;
+                $status = Response::HTTP_CREATED;
                 break;
             case Request::METHOD_DELETE:
-                $status = 204;
+                $status = Response::HTTP_NO_CONTENT;
                 break;
         }
+
+        $groups = $this->loader->getResponseGroups($request);
 
         // Allow the groups to be modified on each item in a collection.
         if (is_iterable($result) && $this->isCollection($result)) {
@@ -79,10 +77,10 @@ class KernelViewListener
             }
 
             $result = array_map(function ($item) {
-                return $this->normalize($item);
+                return $this->normalize($item, $groups);
             }, $result);
         } else {
-            $result = $this->normalize($result);
+            $result = $this->normalize($result, $groups);
         }
 
         $response = new Response(
@@ -104,35 +102,10 @@ class KernelViewListener
     }
 
     /**
-     * Get a user from the Security Token Storage.
-     */
-    protected function getUser() :? UserInterface
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return null;
-        }
-
-        $user = $token->getUser();
-
-        if (!is_object($user)) {
-            return null;
-        }
-
-        return $user;
-    }
-
-    /**
      * Normalize an object.
      */
-    protected function normalize($result)
+    protected function normalize($result, $groups = null)
     {
-        $groups = $this->defaultGroups;
-
-        $user = $this->getUser();
-        if ($user instanceof UserGroupsInterface) {
-            $groups = $user->getGroups($result);
-        }
-
         $context = [
             'groups' => $groups,
             'enable_max_depth' => true,
