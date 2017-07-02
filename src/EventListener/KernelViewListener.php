@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -26,6 +27,11 @@ class KernelViewListener
     protected $normalizer;
 
     /**
+     * @var EncoderInterface
+     */
+    protected $encoder;
+
+    /**
      * @var GroupLoaderInterface
      */
     protected $loader;
@@ -36,6 +42,7 @@ class KernelViewListener
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
+        EncoderInterface $encoder,
         GroupLoaderInterface $loader
     ) {
         $this->serializer = $serializer;
@@ -48,7 +55,7 @@ class KernelViewListener
      *
      * @param GetResponseForControllerResultEvent $event
      */
-    public function onKernelView(GetResponseForControllerResultEvent $event) : Response
+    public function onKernelView(GetResponseForControllerResultEvent $event) :? Response
     {
         $request = $event->getRequest();
         $result = $event->getControllerResult();
@@ -56,6 +63,12 @@ class KernelViewListener
         // If the event already has a response, do not override it.
         if (!$event->hasResponse()) {
             return $event->getResponse();
+        }
+
+        // If the request format is not supported, nothing more can be done
+        // without the serializer throwing an exception.
+        if (!$this->encoder->supportsEncoding($request->getRequestFormat())) {
+            return null;
         }
 
         $status = Response::HTTP_OK;

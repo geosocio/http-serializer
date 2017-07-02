@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class ContentResolver implements ArgumentValueResolverInterface
 {
@@ -28,6 +29,11 @@ class ContentResolver implements ArgumentValueResolverInterface
     protected $serializer;
 
     /**
+     * @var DenormalizerInterface
+     */
+    protected $denormalizer;
+
+    /**
      * @var DecoderInterface
      */
     protected $decoder;
@@ -39,6 +45,7 @@ class ContentResolver implements ArgumentValueResolverInterface
 
     public function __construct(
         SerializerInterface $serializer,
+        DenormalizerInterface $denormalizer,
         DecoderInterface $decoder,
         GroupLoaderInterface $loader
     ) {
@@ -65,6 +72,10 @@ class ContentResolver implements ArgumentValueResolverInterface
         }
 
         if (!class_exists($argument->getType())) {
+            return false;
+        }
+
+        if (!$this->denormalizer->supportsDenormalization($request->getContent(), $request->getRequestFormat())) {
             return false;
         }
 
