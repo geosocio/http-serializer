@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 interface GroupLoaderInterface
 {
-    public function getRequestGroups(Request $request);
+    public function getRequestGroups(Request $request) :? array;
 
-    public function getResponseGroups(Request $request);
+    public function getResponseGroups(Request $request) :? array;
 }

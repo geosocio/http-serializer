@@ -11,7 +11,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class GroupLoader
 {
-
     /**
      * @var ControllerResolverInterface
      */
@@ -33,7 +32,7 @@ class GroupLoader
         $this->reader = $reader;
     }
 
-    public function getRequestGroups(Request $request)
+    public function getRequestGroups(Request $request) :? array
     {
         $annotations = array_filter($this->getAnnotations($request), function ($annotation) {
             if ($annotation instanceof ResponseGroups) {
@@ -46,7 +45,7 @@ class GroupLoader
         return $this->getGroups($annotations);
     }
 
-    public function getResponseGroups(Request $request)
+    public function getResponseGroups(Request $request) :? array
     {
         $annotations = array_filter($this->getAnnotations($request), function ($annotation) {
             if ($annotation instanceof RequestGroups) {
