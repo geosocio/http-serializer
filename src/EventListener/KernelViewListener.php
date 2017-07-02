@@ -71,6 +71,12 @@ class KernelViewListener
             return null;
         }
 
+        // If the normalizer cannot normalize the result, then there is nothing
+        // more than can be done without the serializer throwing an exception.
+        if (!$this->normalizer->supportsNormalization($result, $request->getRequestFormat())) {
+            return null;
+        }
+
         $status = Response::HTTP_OK;
         switch ($request->getMethod()) {
             case Request::METHOD_POST:
@@ -83,47 +89,20 @@ class KernelViewListener
 
         $groups = $this->loader->getResponseGroups($request);
 
-        // Allow the groups to be modified on each item in a collection.
-        if (is_iterable($result) && $this->isCollection($result)) {
-            if (is_object($result) && method_exists($result, 'toArray')) {
-                $result = $result->toArray();
-            }
-
-            $result = array_map(function ($item) {
-                return $this->normalize($item, $groups);
-            }, $result);
-        } else {
-            $result = $this->normalize($result, $groups);
-        }
-
+        // @TODO Add an event to modify these arguments.
         $response = new Response(
-            $this->serializer->serialize($result, $request->getRequestFormat()),
+            $this->serializer->serialize(
+                $event->getControllerResult(),
+                $event->getRequest()->getRequestFormat(),
+                [
+                    'groups' => $groups,
+                    'enable_max_depth' => true,
+                ]
+            ),
             $status
         );
         $event->setResponse($response);
 
         return $response;
-    }
-
-    /**
-     * Determines if the iterable is a collection or an associative array.
-     */
-    protected function isCollection(iterable $data) : bool
-    {
-        $keys = array_keys($data);
-        return $keys === array_keys($keys);
-    }
-
-    /**
-     * Normalize an object.
-     */
-    protected function normalize($result, $groups = null)
-    {
-        $context = [
-            'groups' => $groups,
-            'enable_max_depth' => true,
-        ];
-
-        return $this->normalizer->normalize($result, null, $context);
     }
 }

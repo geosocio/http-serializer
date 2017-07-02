@@ -87,6 +87,7 @@ class ContentResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
+        // @TODO Add an event to modify these arguments.
         yield $this->serializer->deserialize(
             $request->getContent(),
             $argument->getType(),
