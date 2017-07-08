@@ -3,12 +3,9 @@
 namespace GeoSocio\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\Event\SerializeEvent;
-use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
@@ -41,17 +38,24 @@ class KernelExceptionListener
     protected $eventDispatcher;
 
     /**
+     * @var string
+     */
+    protected $defaultFormat;
+
+    /**
      * Creates the Event Listener.
      */
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
         EncoderInterface $encoder,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        $defaultFormat = null
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
         $this->eventDispatcher = $eventDispatcher;
+        $this->defaultFormat = $defaultFormat;
     }
 
     /**
@@ -70,21 +74,17 @@ class KernelExceptionListener
             return $event->getResponse();
         }
 
-        // Override the default request format.
-        // @TODO Make this configurable!
-        if ($request->getRequestFormat() === 'html') {
-            $request->setRequestFormat('json');
-        }
+        $format = $request->getRequestFormat($this->defaultFormat);
 
         // If the request format is not supported, nothing more can be done
         // without the serializer throwing an exception.
-        if (!$this->encoder->supportsEncoding($request->getRequestFormat())) {
+        if (!$this->encoder->supportsEncoding($format)) {
             return null;
         }
 
         // If the normalizer cannot normalize the result, then there is nothing
         // more than can be done without the serializer throwing an exception.
-        if (!$this->normalizer->supportsNormalization($exception, $request->getRequestFormat())) {
+        if (!$this->normalizer->supportsNormalization($exception, $format)) {
             return null;
         }
 
@@ -95,7 +95,7 @@ class KernelExceptionListener
 
         $serializeEvent = new SerializeEvent(
             $exception,
-            $request->getRequestFormat(),
+            $format,
             [
                 'enable_max_depth' => true,
             ],
