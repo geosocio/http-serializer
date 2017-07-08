@@ -2,7 +2,9 @@
 
 namespace GeoSocio\Core\ArgumentResolver;
 
+use GeoSocio\HttpSerializer\Event\DeserializeEvent;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -10,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class ContentResolver implements ArgumentValueResolverInterface
+class ContentClassResolver implements ArgumentValueResolverInterface
 {
     const INTERNAL_TYPES = [
         'self',
@@ -43,15 +45,22 @@ class ContentResolver implements ArgumentValueResolverInterface
      */
     protected $loader;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
     public function __construct(
         SerializerInterface $serializer,
         DenormalizerInterface $denormalizer,
         DecoderInterface $decoder,
-        GroupLoaderInterface $loader
+        GroupLoaderInterface $loader,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->serializer = $serializer;
         $this->decoder = $decoder;
         $this->loader = $loader;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -87,14 +96,23 @@ class ContentResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
-        // @TODO Add an event to modify these arguments.
-        yield $this->serializer->deserialize(
+        $event = new DeserializeEvent(
             $request->getContent(),
             $argument->getType(),
             $request->getRequestFormat(),
             [
                 'groups' => $this->loader->getRequestGroups($request),
-            ]
+            ],
+            $request
+        );
+
+        $this->eventDispatcher->dispatch(DeserializeEvent::NAME, $event);
+
+        yield $this->serializer->deserialize(
+            $event->getData(),
+            $event->getType(),
+            $event->getFormat(),
+            $event->getContext()
         );
     }
 }

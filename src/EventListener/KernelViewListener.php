@@ -2,7 +2,9 @@
 
 namespace GeoSocio\HttpSerializer\EventListener;
 
+use GeoSocio\HttpSerializer\Event\SerializeEvent;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
@@ -37,17 +39,24 @@ class KernelViewListener
     protected $loader;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * Creates the Event Listener.
      */
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
         EncoderInterface $encoder,
-        GroupLoaderInterface $loader
+        GroupLoaderInterface $loader,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
         $this->loader = $loader;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -89,15 +98,23 @@ class KernelViewListener
 
         $groups = $this->loader->getResponseGroups($request);
 
-        // @TODO Add an event to modify these arguments.
+        $serializeEvent = new SerializeEvent(
+            $event->getControllerResult(),
+            $event->getRequest()->getRequestFormat(),
+            [
+                'groups' => $groups,
+                'enable_max_depth' => true,
+            ],
+            $event->getRequest()
+        );
+
+        $this->eventDispatcher->dispatch(SerializeEvent::NAME, $serializeEvent);
+
         $response = new Response(
             $this->serializer->serialize(
-                $event->getControllerResult(),
-                $event->getRequest()->getRequestFormat(),
-                [
-                    'groups' => $groups,
-                    'enable_max_depth' => true,
-                ]
+                $serializeEvent->getData(),
+                $serializeEvent->getFormat(),
+                $serializeEvent->getContext()
             ),
             $status
         );
