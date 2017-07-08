@@ -1,4 +1,4 @@
-# Http Serializer
+# Http Serializer [![Build Status](https://travis-ci.org/geosocio/http-serializer.svg?branch=develop)](https://travis-ci.org/geosocio/http-serializer) [![Coverage Status](https://coveralls.io/repos/github/geosocio/http-serializer/badge.svg)](https://coveralls.io/github/geosocio/http-serializer)
 Serializes a Controller Request & Response.
 
 ## Example
