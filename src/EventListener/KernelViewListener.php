@@ -55,6 +55,7 @@ class KernelViewListener
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
+        $this->encoder = $encoder;
         $this->loader = $loader;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -70,7 +71,7 @@ class KernelViewListener
         $result = $event->getControllerResult();
 
         // If the event already has a response, do not override it.
-        if (!$event->hasResponse()) {
+        if ($event->hasResponse()) {
             return $event->getResponse();
         }
 
@@ -99,13 +100,13 @@ class KernelViewListener
         $groups = $this->loader->getResponseGroups($request);
 
         $serializeEvent = new SerializeEvent(
-            $event->getControllerResult(),
-            $event->getRequest()->getRequestFormat(),
+            $result,
+            $request->getRequestFormat(),
             [
                 'groups' => $groups,
                 'enable_max_depth' => true,
             ],
-            $event->getRequest()
+            $request
         );
 
         $this->eventDispatcher->dispatch(SerializeEvent::NAME, $serializeEvent);

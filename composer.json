@@ -10,6 +10,11 @@
           "GeoSocio\\HttpSerializer\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+          "GeoSocio\\Tests\\HttpSerializer\\": "tests/"
+        }
+    },
     "require": {
         "symfony/http-foundation": "^3.0",
         "symfony/security": "^3.0",

@@ -54,6 +54,7 @@ class KernelExceptionListener
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
+        $this->encoder = $encoder;
         $this->eventDispatcher = $eventDispatcher;
         $this->defaultFormat = $defaultFormat;
     }
@@ -70,7 +71,7 @@ class KernelExceptionListener
         $request = $event->getRequest();
 
         // If the event already has a response, do not override it.
-        if (!$event->hasResponse()) {
+        if ($event->hasResponse()) {
             return $event->getResponse();
         }
 
