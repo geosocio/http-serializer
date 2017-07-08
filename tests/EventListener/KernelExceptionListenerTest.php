@@ -3,20 +3,22 @@
 namespace GeoSocio\Tests\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\EventListener\KernelViewListener;
+use GeoSocio\HttpSerializer\EventListener\KernelExceptionListener;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use PHPUnit\Framework\TestCase;
 
-class KernelViewListenerTest extends TestCase
+class KernelExceptionListenerTest extends TestCase
 {
 
-    public function testOnKernelView()
+    public function testOnKernelException()
     {
         $serializer = $this->createMock(SerializerInterface::class);
         $normalizer = $this->createMock(NormalizerInterface::class);
@@ -29,32 +31,34 @@ class KernelViewListenerTest extends TestCase
             ->method('supportsEncoding')
             ->willReturn(true);
 
-        $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $listener = new KernelViewListener($serializer, $normalizer, $encoder, $loader, $eventDispatcher);
+        $listener = new KernelExceptionListener($serializer, $normalizer, $encoder, $eventDispatcher);
+
+        $exception = $this->getMockBuilder(\Exception::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $request->expects($this->exactly(3))
+        $request->expects($this->once())
             ->method('getRequestFormat')
             ->willReturn('test');
 
-        $result = new \stdClass();
+        $event = $this->getMockBuilder(GetResponseForExceptionEvent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $event = $this->createMock(GetResponseForControllerResultEvent::class);
         $event->expects($this->once())
-            ->method('hasResponse')
-            ->willReturn(false);
+            ->method('getException')
+            ->willReturn($exception);
+
         $event->expects($this->once())
             ->method('getRequest')
             ->willReturn($request);
-        $event->expects($this->once())
-            ->method('getControllerResult')
-            ->willReturn($result);
 
-        $response = $listener->onKernelView($event);
+        $response = $listener->onKernelException($event);
 
         $this->assertInstanceOf(Response::class, $response);
     }
