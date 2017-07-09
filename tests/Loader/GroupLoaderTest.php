@@ -4,6 +4,7 @@ namespace GeoSocio\Tests\HttpSerializer\Loader;
 
 use Doctrine\Common\Annotations\Reader;
 use GeoSocio\HttpSerializer\Annotation\RequestGroups;
+use GeoSocio\HttpSerializer\Annotation\ResponseGroups;
 use GeoSocio\HttpSerializer\Loader\GroupLoader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,12 +19,22 @@ class GroupLoaderTest extends TestCase
         $annotations = [
             new Groups([
                 'value' => [
-                    'test'
+                    'test',
                 ]
             ]),
             new RequestGroups([
                 'value' => [
                     'test'
+                ]
+            ]),
+            new RequestGroups([
+                'value' => [
+                    'test2'
+                ]
+            ]),
+            new ResponseGroups([
+                'value' => [
+                    'test3'
                 ]
             ]),
             new MaxDepth([
@@ -53,7 +64,8 @@ class GroupLoaderTest extends TestCase
         $groups = $loader->getRequestGroups($request);
 
         $this->assertInternalType('array', $groups);
-        $this->assertCount(1, $groups);
+        $this->assertCount(2, $groups);
         $this->assertEquals('test', $groups[0]);
+        $this->assertEquals('test2', $groups[1]);
     }
 }
