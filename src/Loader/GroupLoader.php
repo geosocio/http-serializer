@@ -64,14 +64,20 @@ class GroupLoader
             return null;
         }
 
-        return array_reduce($annotations, function ($carry, $annotation) {
+        return array_values(array_unique(array_reduce($annotations, function ($carry, $annotation) {
             return array_merge($carry, $annotation->getGroups());
-        }, []);
+        }, [])));
     }
 
     protected function getAnnotations(Request $request) : array
     {
-        [$class, $name] = $this->resolver->getController($event->getRequest());
+        $controller = $this->resolver->getController($request);
+
+        if (!$controller) {
+            return [];
+        }
+
+        [$class, $name] = $controller;
         return $this->reader->getMethodAnnotations(new \ReflectionMethod($class, $name));
     }
 }
