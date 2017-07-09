@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\Core\ArgumentResolver;
+namespace GeoSocio\HttpSerializer\ArgumentResolver;
 
 use GeoSocio\HttpSerializer\Event\DeserializeEvent;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
@@ -58,6 +58,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->serializer = $serializer;
+        $this->denormalizer = $denormalizer;
         $this->decoder = $decoder;
         $this->loader = $loader;
         $this->eventDispatcher = $eventDispatcher;

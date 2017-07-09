@@ -2,14 +2,11 @@
 
 namespace GeoSocio\Tests\HttpSerializer\EventListener;
 
-use GeoSocio\HttpSerializer\EventListener\KernelViewListener;
 use GeoSocio\HttpSerializer\EventListener\KernelExceptionListener;
-use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
