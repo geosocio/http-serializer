@@ -16,31 +16,7 @@ class GroupLoaderTest extends TestCase
 {
     public function testGetRequestGroups()
     {
-        $annotations = [
-            new Groups([
-                'value' => [
-                    'test',
-                ]
-            ]),
-            new RequestGroups([
-                'value' => [
-                    'test'
-                ]
-            ]),
-            new RequestGroups([
-                'value' => [
-                    'test2'
-                ]
-            ]),
-            new ResponseGroups([
-                'value' => [
-                    'test3'
-                ]
-            ]),
-            new MaxDepth([
-                'value' => 1,
-            ]),
-        ];
+        $annotations = $this->getAnnotations();
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -67,5 +43,65 @@ class GroupLoaderTest extends TestCase
         $this->assertCount(2, $groups);
         $this->assertEquals('test', $groups[0]);
         $this->assertEquals('test2', $groups[1]);
+    }
+
+    public function testGetResponseGroups()
+    {
+        $annotations = $this->getAnnotations();
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $resolver = $this->createMock(ControllerResolverInterface::class);
+        $resolver->expects($this->once())
+            ->method('getController')
+            ->willReturn([
+                GroupLoader::class,
+                'getRequestGroups'
+            ]);
+
+        $reader = $this->createMock(Reader::class);
+        $reader->expects($this->once())
+            ->method('getMethodAnnotations')
+            ->willReturn($annotations);
+
+        $loader = new GroupLoader($resolver, $reader);
+
+        $groups = $loader->getResponseGroups($request);
+
+        $this->assertInternalType('array', $groups);
+        $this->assertCount(2, $groups);
+        $this->assertEquals('test', $groups[0]);
+        $this->assertEquals('test3', $groups[1]);
+    }
+
+    public function getAnnotations()
+    {
+        return [
+            new Groups([
+                'value' => [
+                    'test',
+                ]
+            ]),
+            new RequestGroups([
+                'value' => [
+                    'test'
+                ]
+            ]),
+            new RequestGroups([
+                'value' => [
+                    'test2'
+                ]
+            ]),
+            new ResponseGroups([
+                'value' => [
+                    'test3'
+                ]
+            ]),
+            new MaxDepth([
+                'value' => 1,
+            ]),
+        ];
     }
 }
