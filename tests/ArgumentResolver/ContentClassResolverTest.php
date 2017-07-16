@@ -14,6 +14,9 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class ContentClassResolverTest extends TestCase
 {
+    /**
+     * Test Supports
+     */
     public function testSupports()
     {
         $data = new \stdClass();
@@ -63,5 +66,43 @@ class ContentClassResolverTest extends TestCase
         $result = $resolver->supports($request, $metadata);
 
         $this->assertTrue($result);
+    }
+
+    /**
+     * Test Resolve
+     */
+    public function testResolve()
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $denormalizer = $this->createMock(DenormalizerInterface::class);
+        $decoder = $this->createMock(DecoderInterface::class);
+        $loader = $this->createMock(GroupLoaderInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $resolver = new ContentClassResolver(
+            $serializer,
+            $denormalizer,
+            $decoder,
+            $loader,
+            $eventDispatcher
+        );
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->once())
+            ->method('getRequestFormat')
+            ->willReturn('test');
+
+        $metadata = $this->getMockBuilder(ArgumentMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects($this->once())
+            ->method('getType')
+            ->willReturn('test');
+
+        $result = $resolver->resolve($request, $metadata)->next();
+
+        $this->assertNull($result);
     }
 }
