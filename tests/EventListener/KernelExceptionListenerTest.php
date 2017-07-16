@@ -14,7 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class KernelExceptionListenerTest extends TestCase
 {
-
+    /**
+     * Test Kernel Exception Event
+     */
     public function testOnKernelException()
     {
         $serializer = $this->createMock(SerializerInterface::class);
