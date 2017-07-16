@@ -12,8 +12,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
+/**
+ * Content Class Resolver
+ */
 class ContentClassResolver implements ArgumentValueResolverInterface
 {
+    /**
+     * @var array
+     */
     const INTERNAL_TYPES = [
         'self',
         'array',
@@ -50,6 +56,15 @@ class ContentClassResolver implements ArgumentValueResolverInterface
      */
     protected $eventDispatcher;
 
+    /**
+     * Content Class Resolver
+     *
+     * @param SerializerInterface $serializer
+     * @param DenormalizerInterface $denormalizer
+     * @param DecoderInterface $decoder
+     * @param GroupLoaderInterface $loader
+     * @param EventDispatcherInterface $eventDispatcher
+     */
     public function __construct(
         SerializerInterface $serializer,
         DenormalizerInterface $denormalizer,

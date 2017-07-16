@@ -7,6 +7,9 @@ use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
+/**
+ * Content Array Resolver
+ */
 class ContentArrayResolver implements ArgumentValueResolverInterface
 {
 
@@ -15,6 +18,11 @@ class ContentArrayResolver implements ArgumentValueResolverInterface
      */
     protected $decoder;
 
+    /**
+     * Content Array Resolver
+     *
+     * @param DecoderInterface $decoder
+     */
     public function __construct(DecoderInterface $decoder)
     {
         $this->decoder = $decoder;
