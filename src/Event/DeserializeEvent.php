@@ -18,14 +18,14 @@ class DeserializeEvent extends AbstractSerializerEvent
         Request $request = null
     ) {
         $this->type = $type;
-        parent::__construct($$data, $format, $context, $request);
+        parent::__construct($data, $format, $context, $request);
     }
 
     public function setType(string $type) : self
     {
         $this->type = $type;
 
-        return $data;
+        return $this;
     }
 
     public function getType()
