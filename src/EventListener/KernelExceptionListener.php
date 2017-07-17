@@ -44,13 +44,19 @@ class KernelExceptionListener
 
     /**
      * Creates the Event Listener.
+     *
+     * @param SerializerInterface $serializer
+     * @param NormalizerInterface $normalizer
+     * @param EncoderInterface $encoder
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $defaultFormat
      */
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
         EncoderInterface $encoder,
         EventDispatcherInterface $eventDispatcher,
-        $defaultFormat = null
+        ?string $defaultFormat = null
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
@@ -64,7 +70,7 @@ class KernelExceptionListener
      *
      * @param GetResponseForExceptionEvent $event
      */
-    public function onKernelException(GetResponseForExceptionEvent $event) : Response
+    public function onKernelException(GetResponseForExceptionEvent $event) :? Response
     {
         // You get the exception object from the received event
         $exception = $event->getException();
@@ -89,19 +95,17 @@ class KernelExceptionListener
             return null;
         }
 
+
         $status = 500;
         if ($exception instanceof HttpExceptionInterface) {
             $status = $exception->getStatusCode();
         }
 
-        $serializeEvent = new SerializeEvent(
-            $exception,
-            $format,
-            [
-                'enable_max_depth' => true,
-            ],
-            $request
-        );
+        $context = [
+            'enable_max_depth' => true,
+        ];
+
+        $serializeEvent = new SerializeEvent($exception, $format, $context, $request);
 
         $this->eventDispatcher->dispatch(SerializeEvent::NAME, $serializeEvent);
 
