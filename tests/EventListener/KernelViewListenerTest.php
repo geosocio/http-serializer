@@ -15,7 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class KernelViewListenerTest extends TestCase
 {
-
+    /**
+     * Test Kernel View Listener
+     */
     public function testOnKernelView()
     {
         $serializer = $this->createMock(SerializerInterface::class);
@@ -57,5 +59,55 @@ class KernelViewListenerTest extends TestCase
         $response = $listener->onKernelView($event);
 
         $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Test Kernel View Listener
+     */
+    public function testOnKernelViewHasResponse()
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $normalizer = $this->createMock(NormalizerInterface::class);
+        $normalizer->expects($this->never())
+            ->method('supportsNormalization');
+
+        $encoder = $this->createMock(EncoderInterface::class);
+        $encoder->expects($this->never())
+            ->method('supportsEncoding');
+
+        $loader = $this->createMock(GroupLoaderInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $listener = new KernelViewListener($serializer, $normalizer, $encoder, $loader, $eventDispatcher);
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->never())
+            ->method('getRequestFormat');
+
+        $result = new \stdClass();
+
+        $event = $this->createMock(GetResponseForControllerResultEvent::class);
+        $event->expects($this->once())
+            ->method('hasResponse')
+            ->willReturn(true);
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getResponse')
+            ->willReturn($response);
+
+        $event->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
+        $event->expects($this->once())
+            ->method('getControllerResult')
+            ->willReturn($result);
+
+        $this->assertSame($response, $listener->onKernelView($event));
     }
 }
