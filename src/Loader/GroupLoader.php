@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+/**
+ * Group Loader
+ */
 class GroupLoader
 {
     /**
@@ -23,6 +26,9 @@ class GroupLoader
 
     /**
      * Creates the Event Listener.
+     *
+     * @param ControllerResolverInterface $resolver
+     * @param Reader $reader
      */
     public function __construct(
         ControllerResolverInterface $resolver,
@@ -32,6 +38,13 @@ class GroupLoader
         $this->reader = $reader;
     }
 
+    /**
+     * Gets the Request Groups
+     *
+     * @param Request $request
+     *
+     * @return array|null
+     */
     public function getRequestGroups(Request $request) :? array
     {
         $annotations = array_filter($this->getAnnotations($request), function ($annotation) {
@@ -45,6 +58,13 @@ class GroupLoader
         return $this->getGroups($annotations);
     }
 
+    /**
+     * Gets the Response Groups
+     *
+     * @param Request $request
+     *
+     * @return array|null
+     */
     public function getResponseGroups(Request $request) :? array
     {
         $annotations = array_filter($this->getAnnotations($request), function ($annotation) {
@@ -58,6 +78,13 @@ class GroupLoader
         return $this->getGroups($annotations);
     }
 
+    /**
+     * Gets the groups from annotations.
+     *
+     * @param array $annotations
+     *
+     * @return array|null
+     */
     protected function getGroups(array $annotations) :? array
     {
         if (empty($annotations)) {
@@ -69,6 +96,13 @@ class GroupLoader
         }, [])));
     }
 
+    /**
+     * Gets the group annotations from the request
+     *
+     * @param Request $request
+     *
+     * @return array|null
+     */
     protected function getAnnotations(Request $request) : array
     {
         $controller = $this->resolver->getController($request);
