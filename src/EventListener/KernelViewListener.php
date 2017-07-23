@@ -45,6 +45,12 @@ class KernelViewListener
 
     /**
      * Creates the Event Listener.
+     *
+     * @param SerializerInterface $serializer
+     * @param NormalizerInterface $normalizer
+     * @param EncoderInterface $encoder
+     * @param GroupLoaderInterface $loader
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         SerializerInterface $serializer,

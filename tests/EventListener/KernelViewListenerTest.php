@@ -119,6 +119,51 @@ class KernelViewListenerTest extends TestCase
     }
 
     /**
+     * Test Kernel View Listener with unsupported encoding.
+     */
+    public function testOnKernelViewUnsupportedEncoding()
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $normalizer = $this->createMock(NormalizerInterface::class);
+        $normalizer->expects($this->never())
+            ->method('supportsNormalization');
+
+        $encoder = $this->createMock(EncoderInterface::class);
+        $encoder->expects($this->once())
+            ->method('supportsEncoding')
+            ->willReturn(false);
+
+        $loader = $this->createMock(GroupLoaderInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $listener = new KernelViewListener($serializer, $normalizer, $encoder, $loader, $eventDispatcher);
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->once())
+            ->method('getRequestFormat')
+            ->willReturn('test');
+
+        $result = new \stdClass();
+
+        $event = $this->createMock(GetResponseForControllerResultEvent::class);
+        $event->expects($this->once())
+            ->method('hasResponse')
+            ->willReturn(false);
+        $event->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
+        $event->expects($this->once())
+            ->method('getControllerResult')
+            ->willReturn($result);
+
+        $response = $listener->onKernelView($event);
+
+        $this->assertNull($response);
+    }
+
+    /**
      * Data provider for response tests.
      */
     public function views() : array
