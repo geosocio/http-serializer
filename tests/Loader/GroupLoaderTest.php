@@ -14,6 +14,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 class GroupLoaderTest extends TestCase
 {
+    /**
+     * Test Get Request Groups.
+     */
     public function testGetRequestGroups()
     {
         $annotations = $this->getAnnotations();
@@ -45,6 +48,38 @@ class GroupLoaderTest extends TestCase
         $this->assertEquals('test2', $groups[1]);
     }
 
+    /**
+     * Test Get Response Groups with no annotations.
+     */
+    public function testGetRequestGroupsNoAnnotations()
+    {
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $resolver = $this->createMock(ControllerResolverInterface::class);
+        $resolver->expects($this->once())
+            ->method('getController')
+            ->willReturn([
+                GroupLoader::class,
+                'getRequestGroups'
+            ]);
+
+        $reader = $this->createMock(Reader::class);
+        $reader->expects($this->once())
+            ->method('getMethodAnnotations')
+            ->willReturn([]);
+
+        $loader = new GroupLoader($resolver, $reader);
+
+        $groups = $loader->getRequestGroups($request);
+
+        $this->assertNull($groups);
+    }
+
+    /**
+     * Test Get Response Groups.
+     */
     public function testGetResponseGroups()
     {
         $annotations = $this->getAnnotations();
