@@ -17,8 +17,12 @@ class KernelViewListenerTest extends TestCase
 {
     /**
      * Test Kernel View Listener
+     *
+     * @dataProvider views
+     *
+     * @param string $method
      */
-    public function testOnKernelView()
+    public function testOnKernelView(string $method)
     {
         $serializer = $this->createMock(SerializerInterface::class);
         $normalizer = $this->createMock(NormalizerInterface::class);
@@ -42,6 +46,9 @@ class KernelViewListenerTest extends TestCase
         $request->expects($this->exactly(3))
             ->method('getRequestFormat')
             ->willReturn('test');
+        $request->expects($this->once())
+            ->method('getMethod')
+            ->willReturn($method);
 
         $result = new \stdClass();
 
@@ -109,5 +116,23 @@ class KernelViewListenerTest extends TestCase
             ->willReturn($result);
 
         $this->assertSame($response, $listener->onKernelView($event));
+    }
+
+    /**
+     * Data provider for response tests.
+     */
+    public function views() : array
+    {
+         return [
+             [
+                 Response::HTTP_OK
+             ],
+             [
+                 Request::METHOD_POST
+             ],
+             [
+                 Request::METHOD_DELETE
+             ],
+         ];
     }
 }
