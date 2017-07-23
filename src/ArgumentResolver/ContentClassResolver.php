@@ -88,6 +88,11 @@ class ContentClassResolver implements ArgumentValueResolverInterface
             return false;
         }
 
+        // Only support POST & PUT since PATCH does not have the entire object.
+        if (!in_array($request->getMethod(), [Request::METHOD_POST, Request::METHOD_PUT])) {
+            return false;
+        }
+
         if (!$this->decoder->supportsDecoding($request->getRequestFormat())) {
             return false;
         }
