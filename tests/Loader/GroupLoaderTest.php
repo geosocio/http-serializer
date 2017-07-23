@@ -78,6 +78,31 @@ class GroupLoaderTest extends TestCase
     }
 
     /**
+     * Test Get Request Groups with no controller.
+     */
+    public function testGetRequestGroupsNoController()
+    {
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $resolver = $this->createMock(ControllerResolverInterface::class);
+        $resolver->expects($this->once())
+            ->method('getController')
+            ->willReturn(null);
+
+        $reader = $this->createMock(Reader::class);
+        $reader->expects($this->never())
+            ->method('getMethodAnnotations');
+
+        $loader = new GroupLoader($resolver, $reader);
+
+        $groups = $loader->getRequestGroups($request);
+
+        $this->assertNull($groups);
+    }
+
+    /**
      * Test Get Response Groups.
      */
     public function testGetResponseGroups()
