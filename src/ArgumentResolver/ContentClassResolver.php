@@ -129,6 +129,8 @@ class ContentClassResolver implements ArgumentValueResolverInterface
 
         $this->eventDispatcher->dispatch(DeserializeEvent::NAME, $event);
 
+        // @TODO Validate the result!
+
         yield $this->serializer->deserialize(
             $event->getData(),
             $event->getType(),
