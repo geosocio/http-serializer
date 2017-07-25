@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * Group Loader
  */
-class GroupLoader
+class GroupLoader implements GroupLoaderInterface
 {
     /**
      * @var ControllerResolverInterface
@@ -39,11 +39,7 @@ class GroupLoader
     }
 
     /**
-     * Gets the Request Groups
-     *
-     * @param Request $request
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
     public function getRequestGroups(Request $request) :? array
     {
@@ -59,11 +55,7 @@ class GroupLoader
     }
 
     /**
-     * Gets the Response Groups
-     *
-     * @param Request $request
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
     public function getResponseGroups(Request $request) :? array
     {
