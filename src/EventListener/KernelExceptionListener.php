@@ -95,7 +95,6 @@ class KernelExceptionListener
             return null;
         }
 
-
         $status = 500;
         if ($exception instanceof HttpExceptionInterface) {
             $status = $exception->getStatusCode();
