@@ -4,6 +4,7 @@ namespace GeoSocio\HttpSerializer\ArgumentResolver;
 
 use GeoSocio\HttpSerializer\Event\DeserializeEvent;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
+use GeoSocio\HttpSerializer\Exception\ConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Content Class Resolver
@@ -57,6 +59,11 @@ class ContentClassResolver implements ArgumentValueResolverInterface
     protected $eventDispatcher;
 
     /**
+     * @var ValidatorInterface
+     */
+    protected $validator;
+
+    /**
      * Content Class Resolver
      *
      * @param SerializerInterface $serializer
@@ -64,19 +71,22 @@ class ContentClassResolver implements ArgumentValueResolverInterface
      * @param DecoderInterface $decoder
      * @param GroupLoaderInterface $loader
      * @param EventDispatcherInterface $eventDispatcher
+     * @param ValidatorInterface $validator
      */
     public function __construct(
         SerializerInterface $serializer,
         DenormalizerInterface $denormalizer,
         DecoderInterface $decoder,
         GroupLoaderInterface $loader,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ValidatorInterface $validator
     ) {
         $this->serializer = $serializer;
         $this->denormalizer = $denormalizer;
         $this->decoder = $decoder;
         $this->loader = $loader;
         $this->eventDispatcher = $eventDispatcher;
+        $this->validator = $validator;
     }
 
     /**
@@ -105,7 +115,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
             return false;
         }
 
-        if (!$this->denormalizer->supportsDenormalization($request->getContent(), $request->getRequestFormat())) {
+        if (!$this->denormalizer->supportsDenormalization($request->getContent(), $argument->getType(), $request->getRequestFormat())) {
             return false;
         }
 
@@ -129,13 +139,19 @@ class ContentClassResolver implements ArgumentValueResolverInterface
 
         $this->eventDispatcher->dispatch(DeserializeEvent::NAME, $event);
 
-        // @TODO Validate the result!
-
-        yield $this->serializer->deserialize(
+        $value = $this->serializer->deserialize(
             $event->getData(),
             $event->getType(),
             $event->getFormat(),
             $event->getContext()
         );
+
+        $errors = $this->validator->validate($value);
+
+        if (count($errors)) {
+            throw new ConstraintViolationException($errors);
+        }
+
+        yield $value;
     }
 }
