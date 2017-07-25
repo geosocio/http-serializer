@@ -96,8 +96,10 @@ class KernelExceptionListener
         }
 
         $status = 500;
+        $headers = [];
         if ($exception instanceof HttpExceptionInterface) {
             $status = $exception->getStatusCode();
+            $headers = $exception->getHeaders();
         }
 
         $context = [
@@ -114,7 +116,8 @@ class KernelExceptionListener
                 $serializeEvent->getFormat(),
                 $serializeEvent->getContext()
             ),
-            $status
+            $status,
+            $headers
         );
         $event->setResponse($response);
 
