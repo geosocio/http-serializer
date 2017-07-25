@@ -89,10 +89,7 @@ class KernelViewListener
 
         // If the normalizer cannot normalize the result, then there is nothing
         // more than can be done without the serializer throwing an exception.
-        if (!is_array($result)
-            && !$result instanceof \Traversable
-            && !$this->normalizer->supportsNormalization($result, $request->getRequestFormat())
-        ) {
+        if (is_object($result) && !$this->normalizer->supportsNormalization($result, $request->getRequestFormat())) {
             return null;
         }
 
