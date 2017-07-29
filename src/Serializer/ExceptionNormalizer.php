@@ -2,6 +2,7 @@
 
 namespace GeoSocio\HttpSerializer\Serializer;
 
+use GeoSocio\HttpSerializer\Exception\ConstraintViolationExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
@@ -37,6 +38,10 @@ class ExceptionNormalizer implements NormalizerInterface, NormalizerAwareInterfa
             'message' => $object->getMessage(),
             'code' => $object->getCode(),
         ];
+
+        if ($object instanceof ConstraintViolationExceptionInterface) {
+            $data['constraintViolations'] = $this->normalizer->normalize($object->getConstraintViolations(), $format, $context);
+        }
 
         if ($this->environment === 'dev') {
             $trace = array_map(function ($line) {
