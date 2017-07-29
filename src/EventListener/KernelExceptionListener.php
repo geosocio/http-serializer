@@ -119,6 +119,14 @@ class KernelExceptionListener
             $status,
             $headers
         );
+
+        // Add the default content type headers.
+        if (!$response->headers->has('Content-Type')) {
+            if ($mimeType = $request->getMimeType($format)) {
+                $response->headers->set('Content-Type', $mimeType);
+            }
+        }
+
         $event->setResponse($response);
 
         return $response;
