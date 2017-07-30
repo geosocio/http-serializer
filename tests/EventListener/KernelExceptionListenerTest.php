@@ -40,11 +40,14 @@ class KernelExceptionListenerTest extends TestCase
         $exception->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(403);
+        $exception->expects($this->once())
+            ->method('getHeaders')
+            ->willReturn([]);
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $request->expects($this->once())
+        $request->expects($this->exactly(2))
             ->method('getRequestFormat')
             ->willReturn('test');
 

@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ContentClassResolverTest extends TestCase
 {
@@ -26,7 +27,7 @@ class ContentClassResolverTest extends TestCase
         $denormalizer = $this->createMock(DenormalizerInterface::class);
         $denormalizer->expects($this->once())
             ->method('supportsDenormalization')
-            ->with($content, 'test')
+            ->with($content, 'stdClass', 'test')
             ->willReturn(true);
 
         $decoder = $this->createMock(DecoderInterface::class);
@@ -37,13 +38,15 @@ class ContentClassResolverTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -62,7 +65,7 @@ class ContentClassResolverTest extends TestCase
         $metadata = $this->getMockBuilder(ArgumentMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadata->expects($this->exactly(2))
+        $metadata->expects($this->exactly(3))
             ->method('getType')
             ->willReturn(\stdClass::class);
 
@@ -87,13 +90,15 @@ class ContentClassResolverTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -137,13 +142,15 @@ class ContentClassResolverTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -190,13 +197,15 @@ class ContentClassResolverTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -244,13 +253,15 @@ class ContentClassResolverTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -299,13 +310,15 @@ class ContentClassResolverTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -345,7 +358,7 @@ class ContentClassResolverTest extends TestCase
         $denormalizer = $this->createMock(DenormalizerInterface::class);
         $denormalizer->expects($this->once())
             ->method('supportsDenormalization')
-            ->with($content, 'test')
+            ->with($content, 'stdClass', 'test')
             ->willReturn(false);
 
         $decoder = $this->createMock(DecoderInterface::class);
@@ -356,13 +369,15 @@ class ContentClassResolverTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -381,7 +396,7 @@ class ContentClassResolverTest extends TestCase
         $metadata = $this->getMockBuilder(ArgumentMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadata->expects($this->exactly(2))
+        $metadata->expects($this->exactly(3))
             ->method('getType')
             ->willReturn(\stdClass::class);
 
@@ -400,13 +415,15 @@ class ContentClassResolverTest extends TestCase
         $decoder = $this->createMock(DecoderInterface::class);
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
 
         $resolver = new ContentClassResolver(
             $serializer,
             $denormalizer,
             $decoder,
             $loader,
-            $eventDispatcher
+            $eventDispatcher,
+            $validator
         );
 
         $request = $this->getMockBuilder(Request::class)

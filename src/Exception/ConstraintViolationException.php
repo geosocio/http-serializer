@@ -20,8 +20,12 @@ class ConstraintViolationException extends BadRequestHttpException implements Co
      *
      * @param ConstraintViolationListInterface $constraintViolations
      */
-    public function __construct(?ConstraintViolationListInterface $constraintViolations = null, $message = null, \Exception $previous = null, $code = 0)
-    {
+    public function __construct(
+        ?ConstraintViolationListInterface $constraintViolations = null,
+        $message = null,
+        \Exception $previous = null,
+        $code = 0
+    ) {
         parent::__construct($message, $previous, $code);
         $this->constraintViolations = $constraintViolations;
     }

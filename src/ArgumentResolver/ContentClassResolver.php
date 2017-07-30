@@ -115,7 +115,11 @@ class ContentClassResolver implements ArgumentValueResolverInterface
             return false;
         }
 
-        if (!$this->denormalizer->supportsDenormalization($request->getContent(), $argument->getType(), $request->getRequestFormat())) {
+        if (!$this->denormalizer->supportsDenormalization(
+            $request->getContent(),
+            $argument->getType(),
+            $request->getRequestFormat()
+        )) {
             return false;
         }
 

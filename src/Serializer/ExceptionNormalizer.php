@@ -40,7 +40,11 @@ class ExceptionNormalizer implements NormalizerInterface, NormalizerAwareInterfa
         ];
 
         if ($object instanceof ConstraintViolationExceptionInterface) {
-            $data['constraintViolations'] = $this->normalizer->normalize($object->getConstraintViolations(), $format, $context);
+            $data['constraintViolations'] = $this->normalizer->normalize(
+                $object->getConstraintViolations(),
+                $format,
+                $context
+            );
         }
 
         if ($this->environment === 'dev') {
