@@ -36,6 +36,7 @@ class ExceptionNormalizerTest extends TestCase
         $this->assertArrayHasKey('previous', $result);
         $this->assertNull($result['previous']);
         $this->assertArrayHasKey('trace', $result);
+        $this->assertArrayNotHasKey('constraintViolations', $result);
     }
 
     /**
