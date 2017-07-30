@@ -53,6 +53,7 @@ class ExceptionNormalizerTest extends TestCase
 
         $result = $normalizer->normalize($exception);
         $this->assertArrayHasKey('constraintViolations', $result);
+        $this->assertNull($result['constraintViolations']);
     }
 
     /**
