@@ -1,10 +1,13 @@
 <?php
 
-namespace GeoSocio\Tests\Event;
+namespace GeoSocio\Event;
 
 use GeoSocio\HttpSerializer\Event\SerializeEvent;
-use GeoSocio\Tests\HttpSerializer\Event\AbstractSerializerEventTest;
+use GeoSocio\HttpSerializer\Event\AbstractSerializerEventTest;
 
+/**
+ * Serialize Event Test.
+ */
 class SerializeEventTest extends AbstractSerializerEventTest
 {
     /**

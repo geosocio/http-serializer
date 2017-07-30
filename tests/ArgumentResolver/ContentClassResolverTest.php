@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\Tests\HttpSerializer\ArgumentResolver;
+namespace GeoSocio\HttpSerializer\ArgumentResolver;
 
 use GeoSocio\HttpSerializer\ArgumentResolver\ContentClassResolver;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;

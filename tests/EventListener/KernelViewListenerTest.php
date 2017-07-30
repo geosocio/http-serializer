@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\Tests\HttpSerializer\EventListener;
+namespace GeoSocio\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\EventListener\KernelViewListener;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;

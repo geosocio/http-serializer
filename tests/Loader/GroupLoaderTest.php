@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\Tests\HttpSerializer\Loader;
+namespace GeoSocio\HttpSerializer\Loader;
 
 use Doctrine\Common\Annotations\Reader;
 use GeoSocio\HttpSerializer\Annotation\RequestGroups;

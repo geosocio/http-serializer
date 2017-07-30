@@ -1,11 +1,14 @@
 <?php
 
-namespace GeoSocio\Tests\Event;
+namespace GeoSocio\Event;
 
 use GeoSocio\HttpSerializer\Event\DeserializeEvent;
-use GeoSocio\Tests\HttpSerializer\Event\AbstractSerializerEventTest;
+use GeoSocio\HttpSerializer\Event\AbstractSerializerEventTest;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Deserialize Event Test.
+ */
 class DeserializeEventTest extends AbstractSerializerEventTest
 {
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\Tests\HttpSerializer\Event;
+namespace GeoSocio\HttpSerializer\Event;
 
 use Symfony\Component\HttpFoundation\Request;
 use PHPUnit\Framework\TestCase;
