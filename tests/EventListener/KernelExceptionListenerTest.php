@@ -20,6 +20,8 @@ class KernelExceptionListenerTest extends TestCase
      */
     public function testOnKernelException()
     {
+        $defaultFormat = 'test';
+        $mimeType = 'test/test';
         $serializer = $this->createMock(SerializerInterface::class);
         $normalizer = $this->createMock(NormalizerInterface::class);
         $normalizer->expects($this->once())
@@ -33,7 +35,7 @@ class KernelExceptionListenerTest extends TestCase
 
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $listener = new KernelExceptionListener($serializer, $normalizer, $encoder, $eventDispatcher);
+        $listener = new KernelExceptionListener($serializer, $normalizer, $encoder, $eventDispatcher, $defaultFormat);
 
         $exception = $this->createMock(HttpExceptionInterface::class);
 
@@ -49,7 +51,13 @@ class KernelExceptionListenerTest extends TestCase
             ->getMock();
         $request->expects($this->exactly(2))
             ->method('getRequestFormat')
-            ->willReturn('test');
+            ->will($this->returnValueMap([
+                [$defaultFormat, $defaultFormat],
+                [null, 'html'],
+            ]));
+        $request->expects($this->once())
+            ->method('getMimeType')
+            ->willReturn($mimeType);
 
         $event = $this->getMockBuilder(GetResponseForExceptionEvent::class)
             ->disableOriginalConstructor()
@@ -66,6 +74,8 @@ class KernelExceptionListenerTest extends TestCase
         $response = $listener->onKernelException($event);
 
         $this->assertInstanceOf(Response::class, $response);
+        $this->assertTrue($response->headers->has('Content-Type'));
+        $this->assertEquals($mimeType, $response->headers->get('Content-Type'));
     }
 
     /**

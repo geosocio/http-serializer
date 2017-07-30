@@ -3,7 +3,6 @@
 namespace GeoSocio\HttpSerializer\Serializer;
 
 use GeoSocio\HttpSerializer\Exception\ConstraintViolationException;
-use GeoSocio\HttpSerializer\Exception\ConstraintViolationExceptionInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
