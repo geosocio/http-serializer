@@ -3,6 +3,7 @@
 namespace GeoSocio\HttpSerializer\ArgumentResolver;
 
 use GeoSocio\HttpSerializer\ArgumentResolver\ContentClassResolver;
+use GeoSocio\HttpSerializer\Exception\ConstraintViolationException;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ContentClassResolverTest extends TestCase
@@ -443,5 +445,53 @@ class ContentClassResolverTest extends TestCase
         $result = $resolver->resolve($request, $metadata)->next();
 
         $this->assertNull($result);
+    }
+
+    /**
+     * Test Resolve
+     */
+    public function testResolveErrors()
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $denormalizer = $this->createMock(DenormalizerInterface::class);
+        $decoder = $this->createMock(DecoderInterface::class);
+        $loader = $this->createMock(GroupLoaderInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $errorList = $this->createMock(ConstraintViolationListInterface::class);
+        $errorList->expects($this->once())
+            ->method('count')
+            ->willReturn(1);
+
+        $validator = $this->createMock(ValidatorInterface::class);
+        $validator->expects($this->once())
+            ->method('validate')
+            ->willReturn($errorList);
+
+        $resolver = new ContentClassResolver(
+            $serializer,
+            $denormalizer,
+            $decoder,
+            $loader,
+            $eventDispatcher,
+            $validator
+        );
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->once())
+            ->method('getRequestFormat')
+            ->willReturn('test');
+
+        $metadata = $this->getMockBuilder(ArgumentMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects($this->once())
+            ->method('getType')
+            ->willReturn('test');
+
+        $this->expectException(ConstraintViolationException::class);
+        $result = $resolver->resolve($request, $metadata)->next();
     }
 }
