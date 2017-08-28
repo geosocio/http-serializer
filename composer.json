@@ -17,7 +17,6 @@
     },
     "require": {
         "symfony/http-foundation": "^3.0",
-        "symfony/security": "^3.0",
         "symfony/http-kernel": "^3.0",
         "symfony/serializer": "^3.0",
         "doctrine/annotations": "^1.0",

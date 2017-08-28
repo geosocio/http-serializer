@@ -3,6 +3,7 @@
 namespace GeoSocio\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\Event\SerializeEvent;
+use GeoSocio\HttpSerializer\GroupResolver\Response\GroupResolverInterface;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,6 +45,11 @@ class KernelViewListener
     protected $eventDispatcher;
 
     /**
+     * @var GroupResolverInterface
+     */
+    protected $groupResolver;
+
+    /**
      * Creates the Event Listener.
      *
      * @param SerializerInterface $serializer
@@ -51,19 +57,22 @@ class KernelViewListener
      * @param EncoderInterface $encoder
      * @param GroupLoaderInterface $loader
      * @param EventDispatcherInterface $eventDispatcher
+     * @param GroupResolverInterface $groupResolver
      */
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
         EncoderInterface $encoder,
         GroupLoaderInterface $loader,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        GroupResolverInterface $groupResolver
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
         $this->encoder = $encoder;
         $this->loader = $loader;
         $this->eventDispatcher = $eventDispatcher;
+        $this->groupResolver = $groupResolver;
     }
 
     /**
@@ -104,6 +113,10 @@ class KernelViewListener
         }
 
         $groups = $this->loader->getResponseGroups($request);
+
+        if (is_object($result)) {
+            $groups = array_merge($groups, $this->groupResolver->resolve($result));
+        }
 
         $serializeEvent = new SerializeEvent(
             $result,

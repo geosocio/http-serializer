@@ -3,6 +3,7 @@
 namespace GeoSocio\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\EventListener\KernelViewListener;
+use GeoSocio\HttpSerializer\GroupResolver\Response\GroupResolverInterface;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,9 +37,22 @@ class KernelViewListenerTest extends TestCase
             ->willReturn(true);
 
         $loader = $this->createMock(GroupLoaderInterface::class);
+        $loader->expects($this->once())
+            ->method('getResponseGroups')
+            ->willReturn([]);
+
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $listener = new KernelViewListener($serializer, $normalizer, $encoder, $loader, $eventDispatcher);
+        $groupResolver = $this->createMock(GroupResolverInterface::class);
+
+        $listener = new KernelViewListener(
+            $serializer,
+            $normalizer,
+            $encoder,
+            $loader,
+            $eventDispatcher,
+            $groupResolver
+        );
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -85,7 +99,16 @@ class KernelViewListenerTest extends TestCase
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $listener = new KernelViewListener($serializer, $normalizer, $encoder, $loader, $eventDispatcher);
+        $groupResolver = $this->createMock(GroupResolverInterface::class);
+
+        $listener = new KernelViewListener(
+            $serializer,
+            $normalizer,
+            $encoder,
+            $loader,
+            $eventDispatcher,
+            $groupResolver
+        );
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -135,8 +158,16 @@ class KernelViewListenerTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $groupResolver = $this->createMock(GroupResolverInterface::class);
 
-        $listener = new KernelViewListener($serializer, $normalizer, $encoder, $loader, $eventDispatcher);
+        $listener = new KernelViewListener(
+            $serializer,
+            $normalizer,
+            $encoder,
+            $loader,
+            $eventDispatcher,
+            $groupResolver
+        );
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -181,8 +212,16 @@ class KernelViewListenerTest extends TestCase
 
         $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $groupResolver = $this->createMock(GroupResolverInterface::class);
 
-        $listener = new KernelViewListener($serializer, $normalizer, $encoder, $loader, $eventDispatcher);
+        $listener = new KernelViewListener(
+            $serializer,
+            $normalizer,
+            $encoder,
+            $loader,
+            $eventDispatcher,
+            $groupResolver
+        );
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()

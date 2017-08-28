@@ -3,6 +3,7 @@
 namespace GeoSocio\HttpSerializer\ArgumentResolver;
 
 use GeoSocio\HttpSerializer\Event\DeserializeEvent;
+use GeoSocio\HttpSerializer\GroupResolver\Request\GroupResolverInterface;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use GeoSocio\HttpSerializer\Exception\ConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -64,6 +65,11 @@ class ContentClassResolver implements ArgumentValueResolverInterface
     protected $validator;
 
     /**
+     * @var GroupResolverInterface
+     */
+    protected $groupResolver;
+
+    /**
      * Content Class Resolver
      *
      * @param SerializerInterface $serializer
@@ -72,6 +78,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
      * @param GroupLoaderInterface $loader
      * @param EventDispatcherInterface $eventDispatcher
      * @param ValidatorInterface $validator
+     * @param GroupResolverInterface $groupResolver
      */
     public function __construct(
         SerializerInterface $serializer,
@@ -79,7 +86,8 @@ class ContentClassResolver implements ArgumentValueResolverInterface
         DecoderInterface $decoder,
         GroupLoaderInterface $loader,
         EventDispatcherInterface $eventDispatcher,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        GroupResolverInterface $groupResolver
     ) {
         $this->serializer = $serializer;
         $this->denormalizer = $denormalizer;
@@ -87,6 +95,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
         $this->loader = $loader;
         $this->eventDispatcher = $eventDispatcher;
         $this->validator = $validator;
+        $this->groupResolver = $groupResolver;
     }
 
     /**
@@ -131,12 +140,15 @@ class ContentClassResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
+        $groups = $this->loader->getRequestGroups($request);
+        $groups = array_merge($groups, $this->groupResolver->resolve($request, $argument->getType()));
+
         $event = new DeserializeEvent(
             $request->getContent(),
             $argument->getType(),
             $request->getRequestFormat(),
             [
-                'groups' => $this->loader->getRequestGroups($request),
+                'groups' => $groups,
             ],
             $request
         );
