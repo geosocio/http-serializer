@@ -18,4 +18,14 @@ interface GroupResolverInterface
      * @return array An array of groups.
      */
     public function resolve(Request $request, string $type) : array;
+
+    /**
+     * Deteremine if resolver supports the currect subject.
+     *
+     * @param Request $request
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function supports(Request $request, string $type) : bool;
 }

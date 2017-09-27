@@ -3,6 +3,7 @@
 namespace GeoSocio\HttpSerializer\GroupResolver\Response;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Group Resolver Manager.
@@ -23,7 +24,11 @@ class GroupResolverManagerTest extends TestCase
 
         $this->assertSame($manager, $manager->addResolver($resolver));
 
-        $this->assertEmpty($manager->resolve(new \stdClass()));
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assertEmpty($manager->resolve($request, new \stdClass()));
     }
 
     /**
@@ -36,7 +41,11 @@ class GroupResolverManagerTest extends TestCase
         $resolver = $this->createMock(GroupResolverInterface::class);
         $this->assertSame($manager, $manager->addResolver($resolver));
 
-        $this->assertEmpty($manager->resolve(new \stdClass()));
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assertEmpty($manager->resolve($request, new \stdClass()));
     }
 
     /**
@@ -53,7 +62,11 @@ class GroupResolverManagerTest extends TestCase
 
         $this->assertSame($manager, $manager->addResolver($resolver));
 
-        $this->assertTrue($manager->supports(new \stdClass()));
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assertTrue($manager->supports($request, new \stdClass()));
     }
 
     /**
@@ -67,6 +80,10 @@ class GroupResolverManagerTest extends TestCase
 
         $this->assertSame($manager, $manager->addResolver($resolver));
 
-        $this->assertFalse($manager->supports(new \stdClass()));
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assertFalse($manager->supports($request, new \stdClass()));
     }
 }

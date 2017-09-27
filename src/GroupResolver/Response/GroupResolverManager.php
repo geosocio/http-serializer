@@ -2,6 +2,8 @@
 
 namespace GeoSocio\HttpSerializer\GroupResolver\Response;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Group Resolver Manager.
  */
@@ -15,11 +17,11 @@ class GroupResolverManager implements GroupResolverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve($object) : array
+    public function resolve(Request $request, $object) : array
     {
-        $resolved = array_map(function ($resolver) use ($object) {
-            if ($resolver->supports($object)) {
-                return $resolver->resolve($object);
+        $resolved = array_map(function ($resolver) use ($request, $object) {
+            if ($resolver->supports($request, $object)) {
+                return $resolver->resolve($request, $object);
             }
 
             return [];
@@ -31,10 +33,10 @@ class GroupResolverManager implements GroupResolverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($object) : bool
+    public function supports(Request $request, $object) : bool
     {
         foreach ($this->resolvers as $resolver) {
-            if ($resolver->supports($object)) {
+            if ($resolver->supports($request, $object)) {
                 return true;
             }
         }

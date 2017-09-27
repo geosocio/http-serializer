@@ -36,11 +36,6 @@ class KernelViewListenerTest extends TestCase
             ->method('supportsEncoding')
             ->willReturn(true);
 
-        $loader = $this->createMock(GroupLoaderInterface::class);
-        $loader->expects($this->once())
-            ->method('getResponseGroups')
-            ->willReturn([]);
-
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $groupResolver = $this->createMock(GroupResolverInterface::class);
@@ -49,7 +44,6 @@ class KernelViewListenerTest extends TestCase
             $serializer,
             $normalizer,
             $encoder,
-            $loader,
             $eventDispatcher,
             $groupResolver
         );
@@ -96,7 +90,6 @@ class KernelViewListenerTest extends TestCase
         $encoder->expects($this->never())
             ->method('supportsEncoding');
 
-        $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $groupResolver = $this->createMock(GroupResolverInterface::class);
@@ -105,7 +98,6 @@ class KernelViewListenerTest extends TestCase
             $serializer,
             $normalizer,
             $encoder,
-            $loader,
             $eventDispatcher,
             $groupResolver
         );
@@ -156,7 +148,6 @@ class KernelViewListenerTest extends TestCase
             ->method('supportsEncoding')
             ->willReturn(false);
 
-        $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $groupResolver = $this->createMock(GroupResolverInterface::class);
 
@@ -164,7 +155,6 @@ class KernelViewListenerTest extends TestCase
             $serializer,
             $normalizer,
             $encoder,
-            $loader,
             $eventDispatcher,
             $groupResolver
         );
@@ -210,7 +200,6 @@ class KernelViewListenerTest extends TestCase
             ->method('supportsEncoding')
             ->willReturn(true);
 
-        $loader = $this->createMock(GroupLoaderInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $groupResolver = $this->createMock(GroupResolverInterface::class);
 
@@ -218,7 +207,6 @@ class KernelViewListenerTest extends TestCase
             $serializer,
             $normalizer,
             $encoder,
-            $loader,
             $eventDispatcher,
             $groupResolver
         );
