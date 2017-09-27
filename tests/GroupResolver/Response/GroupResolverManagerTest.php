@@ -3,7 +3,6 @@
 namespace GeoSocio\HttpSerializer\GroupResolver\Response;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Group Resolver Manager.
@@ -14,6 +13,23 @@ class GroupResolverManagerTest extends TestCase
      * Test resolve.
      */
     public function testResolve()
+    {
+        $manager = new GroupResolverManager();
+
+        $resolver = $this->createMock(GroupResolverInterface::class);
+        $resolver->expects($this->once())
+           ->method('supports')
+           ->willReturn(true);
+
+        $this->assertSame($manager, $manager->addResolver($resolver));
+
+        $this->assertEmpty($manager->resolve(new \stdClass()));
+    }
+
+    /**
+     * Test resolve.
+     */
+    public function testResolveFalse()
     {
         $manager = new GroupResolverManager();
 
