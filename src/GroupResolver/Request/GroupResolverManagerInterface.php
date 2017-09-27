@@ -14,5 +14,5 @@ interface GroupResolverManagerInterface extends GroupResolverInterface
      *
      * @return self
      */
-    public function addResolver(GroupResolverInterface $resolver) : self;
+    public function addResolver(GroupResolverInterface $resolver);
 }

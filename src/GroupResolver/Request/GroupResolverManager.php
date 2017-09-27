@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\HttpSerializer\GroupResolver\Response;
+namespace GeoSocio\HttpSerializer\GroupResolver\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,8 +19,8 @@ class GroupResolverManager implements GroupResolverManagerInterface
      */
     public function resolve(Request $request, string $type) : array
     {
-        $resolved = array_map(function ($resolver) use ($request) {
-            return $resolver->resolve($request);
+        $resolved = array_map(function ($resolver) use ($request, $type) {
+            return $resolver->resolve($request, $type);
         }, $this->resolvers);
 
         return array_merge(...$resolved);
@@ -29,7 +29,7 @@ class GroupResolverManager implements GroupResolverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function addResolver(GroupResolverInterface $resolver) : self
+    public function addResolver(GroupResolverInterface $resolver)
     {
         $this->resolvers[] = $resolver;
 

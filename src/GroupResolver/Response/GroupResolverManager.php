@@ -45,7 +45,7 @@ class GroupResolverManager implements GroupResolverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function addResolver(GroupResolverInterface $resolver) : self
+    public function addResolver(GroupResolverInterface $resolver)
     {
         $this->resolvers[] = $resolver;
 
