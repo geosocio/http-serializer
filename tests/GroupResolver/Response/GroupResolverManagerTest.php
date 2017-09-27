@@ -31,8 +31,14 @@ class GroupResolverManagerTest extends TestCase
         $manager = new GroupResolverManager();
 
         $resolver = $this->createMock(GroupResolverInterface::class);
+
         $this->assertSame($manager, $manager->addResolver($resolver));
 
         $this->assertFalse($manager->supports(new \stdClass()));
+
+        $resolver->expects($this->once())
+            ->method('supports')
+            ->willReturn(true);
+        $this->assertTrue($manager->supports(new \stdClass()));
     }
 }
