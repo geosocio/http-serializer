@@ -47,6 +47,27 @@ class RequestGroupResolverManagerTest extends TestCase
     /**
      * Test resolve.
      */
+    public function testResolveSupports()
+    {
+        $manager = new RequestGroupResolverManager();
+
+        $resolver = $this->createMock(RequestGroupResolverInterface::class);
+        $resolver->expects($this->once())
+           ->method('supports')
+           ->willReturn(true);
+
+        $this->assertSame($manager, $manager->addResolver($resolver));
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assertEmpty($manager->resolve($request, \stdClass::class));
+    }
+
+    /**
+     * Test resolve.
+     */
     public function testSupports()
     {
         $manager = new RequestGroupResolverManager();
