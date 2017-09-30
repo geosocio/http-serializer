@@ -3,7 +3,7 @@
 namespace GeoSocio\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\Event\SerializeEvent;
-use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
+use GeoSocio\HttpSerializer\GroupResolver\ResponseGroupResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,14 +34,14 @@ class KernelViewListener
     protected $encoder;
 
     /**
-     * @var GroupLoaderInterface
-     */
-    protected $loader;
-
-    /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
+
+    /**
+     * @var ResponseGroupResolverInterface
+     */
+    protected $groupResolver;
 
     /**
      * Creates the Event Listener.
@@ -49,21 +49,21 @@ class KernelViewListener
      * @param SerializerInterface $serializer
      * @param NormalizerInterface $normalizer
      * @param EncoderInterface $encoder
-     * @param GroupLoaderInterface $loader
      * @param EventDispatcherInterface $eventDispatcher
+     * @param ResponseGroupResolverInterface $groupResolver
      */
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
         EncoderInterface $encoder,
-        GroupLoaderInterface $loader,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ResponseGroupResolverInterface $groupResolver
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;
         $this->encoder = $encoder;
-        $this->loader = $loader;
         $this->eventDispatcher = $eventDispatcher;
+        $this->groupResolver = $groupResolver;
     }
 
     /**
@@ -103,13 +103,11 @@ class KernelViewListener
                 break;
         }
 
-        $groups = $this->loader->getResponseGroups($request);
-
         $serializeEvent = new SerializeEvent(
             $result,
             $request->getRequestFormat(),
             [
-                'groups' => $groups,
+                'groups' => $this->groupResolver->resolve($request, $result),
                 'enable_max_depth' => true,
             ],
             $request

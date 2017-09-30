@@ -19,6 +19,8 @@ groups annotation.
 * Response Groups `GeoSocio\HttpSerializer\Annotation\ResponseGroups`
 * Request & Response Groups `Symfony\Component\Serializer\Annotation\Groups`
 
+They may also be applied with a `GroupResolver`.
+
 ## Example
 ```php
 /**

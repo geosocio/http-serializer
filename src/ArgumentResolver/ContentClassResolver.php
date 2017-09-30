@@ -3,7 +3,7 @@
 namespace GeoSocio\HttpSerializer\ArgumentResolver;
 
 use GeoSocio\HttpSerializer\Event\DeserializeEvent;
-use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
+use GeoSocio\HttpSerializer\GroupResolver\RequestGroupResolverInterface;
 use GeoSocio\HttpSerializer\Exception\ConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,11 +49,6 @@ class ContentClassResolver implements ArgumentValueResolverInterface
     protected $decoder;
 
     /**
-     * @var GroupLoaderInterface
-     */
-    protected $loader;
-
-    /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
@@ -64,29 +59,34 @@ class ContentClassResolver implements ArgumentValueResolverInterface
     protected $validator;
 
     /**
+     * @var RequestGroupResolverInterface
+     */
+    protected $groupResolver;
+
+    /**
      * Content Class Resolver
      *
      * @param SerializerInterface $serializer
      * @param DenormalizerInterface $denormalizer
      * @param DecoderInterface $decoder
-     * @param GroupLoaderInterface $loader
      * @param EventDispatcherInterface $eventDispatcher
      * @param ValidatorInterface $validator
+     * @param RequestGroupResolverInterface $groupResolver
      */
     public function __construct(
         SerializerInterface $serializer,
         DenormalizerInterface $denormalizer,
         DecoderInterface $decoder,
-        GroupLoaderInterface $loader,
         EventDispatcherInterface $eventDispatcher,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        RequestGroupResolverInterface $groupResolver
     ) {
         $this->serializer = $serializer;
         $this->denormalizer = $denormalizer;
         $this->decoder = $decoder;
-        $this->loader = $loader;
         $this->eventDispatcher = $eventDispatcher;
         $this->validator = $validator;
+        $this->groupResolver = $groupResolver;
     }
 
     /**
@@ -136,7 +136,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
             $argument->getType(),
             $request->getRequestFormat(),
             [
-                'groups' => $this->loader->getRequestGroups($request),
+                'groups' => $this->groupResolver->resolve($request, $argument->getType()),
             ],
             $request
         );
