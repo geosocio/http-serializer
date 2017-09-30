@@ -3,7 +3,7 @@
 namespace GeoSocio\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\Event\SerializeEvent;
-use GeoSocio\HttpSerializer\GroupResolver\Response\GroupResolverInterface;
+use GeoSocio\HttpSerializer\GroupResolver\ResponseGroupResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +39,7 @@ class KernelViewListener
     protected $eventDispatcher;
 
     /**
-     * @var GroupResolverInterface
+     * @var ResponseGroupResolverInterface
      */
     protected $groupResolver;
 
@@ -50,14 +50,14 @@ class KernelViewListener
      * @param NormalizerInterface $normalizer
      * @param EncoderInterface $encoder
      * @param EventDispatcherInterface $eventDispatcher
-     * @param GroupResolverInterface $groupResolver
+     * @param ResponseGroupResolverInterface $groupResolver
      */
     public function __construct(
         SerializerInterface $serializer,
         NormalizerInterface $normalizer,
         EncoderInterface $encoder,
         EventDispatcherInterface $eventDispatcher,
-        GroupResolverInterface $groupResolver
+        ResponseGroupResolverInterface $groupResolver
     ) {
         $this->serializer = $serializer;
         $this->normalizer = $normalizer;

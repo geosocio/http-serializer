@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\HttpSerializer\GroupResolver\Request;
+namespace GeoSocio\HttpSerializer\GroupResolver;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Group Resolver Manager.
  */
-class GroupResolverManagerTest extends TestCase
+class RequestGroupResolverManagerTest extends TestCase
 {
     /**
      * Test resolve.
      */
     public function testResolve()
     {
-        $manager = new GroupResolverManager();
+        $manager = new RequestGroupResolverManager();
 
-        $resolver = $this->createMock(GroupResolverInterface::class);
+        $resolver = $this->createMock(RequestGroupResolverInterface::class);
         $this->assertSame($manager, $manager->addResolver($resolver));
 
         $request = $this->getMockBuilder(Request::class)

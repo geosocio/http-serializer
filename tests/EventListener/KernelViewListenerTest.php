@@ -3,7 +3,7 @@
 namespace GeoSocio\HttpSerializer\EventListener;
 
 use GeoSocio\HttpSerializer\EventListener\KernelViewListener;
-use GeoSocio\HttpSerializer\GroupResolver\Response\GroupResolverInterface;
+use GeoSocio\HttpSerializer\GroupResolver\ResponseGroupResolverInterface;
 use GeoSocio\HttpSerializer\Loader\GroupLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +38,7 @@ class KernelViewListenerTest extends TestCase
 
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $groupResolver = $this->createMock(GroupResolverInterface::class);
+        $groupResolver = $this->createMock(ResponseGroupResolverInterface::class);
 
         $listener = new KernelViewListener(
             $serializer,
@@ -92,7 +92,7 @@ class KernelViewListenerTest extends TestCase
 
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $groupResolver = $this->createMock(GroupResolverInterface::class);
+        $groupResolver = $this->createMock(ResponseGroupResolverInterface::class);
 
         $listener = new KernelViewListener(
             $serializer,
@@ -149,7 +149,7 @@ class KernelViewListenerTest extends TestCase
             ->willReturn(false);
 
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $groupResolver = $this->createMock(GroupResolverInterface::class);
+        $groupResolver = $this->createMock(ResponseGroupResolverInterface::class);
 
         $listener = new KernelViewListener(
             $serializer,
@@ -201,7 +201,7 @@ class KernelViewListenerTest extends TestCase
             ->willReturn(true);
 
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $groupResolver = $this->createMock(GroupResolverInterface::class);
+        $groupResolver = $this->createMock(ResponseGroupResolverInterface::class);
 
         $listener = new KernelViewListener(
             $serializer,

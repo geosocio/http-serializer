@@ -1,16 +1,16 @@
 <?php
 
-namespace GeoSocio\HttpSerializer\GroupResolver\Response;
+namespace GeoSocio\HttpSerializer\GroupResolver;
 
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Group Resolver Manager.
  */
-class GroupResolverManager implements GroupResolverManagerInterface
+class ResponseGroupResolverManager implements ResponseGroupResolverInterface
 {
     /**
-     * @var GroupResolverInterface[]
+     * @var ResponseGroupResolverInterface[]
      */
     protected $resolvers = [];
 
@@ -47,7 +47,7 @@ class GroupResolverManager implements GroupResolverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function addResolver(GroupResolverInterface $resolver)
+    public function addResolver(ResponseGroupResolverInterface $resolver)
     {
         $this->resolvers[] = $resolver;
 

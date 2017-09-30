@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSocio\HttpSerializer\GroupResolver\Response;
+namespace GeoSocio\HttpSerializer\GroupResolver;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Group Resolver Manager.
  */
-class GroupResolverManagerTest extends TestCase
+class ResponseGroupResolverManagerTest extends TestCase
 {
     /**
      * Test resolve.
      */
     public function testResolve()
     {
-        $manager = new GroupResolverManager();
+        $manager = new ResponseGroupResolverManager();
 
-        $resolver = $this->createMock(GroupResolverInterface::class);
+        $resolver = $this->createMock(ResponseGroupResolverInterface::class);
         $resolver->expects($this->once())
            ->method('supports')
            ->willReturn(true);
@@ -36,9 +36,9 @@ class GroupResolverManagerTest extends TestCase
      */
     public function testResolveFalse()
     {
-        $manager = new GroupResolverManager();
+        $manager = new ResponseGroupResolverManager();
 
-        $resolver = $this->createMock(GroupResolverInterface::class);
+        $resolver = $this->createMock(ResponseGroupResolverInterface::class);
         $this->assertSame($manager, $manager->addResolver($resolver));
 
         $request = $this->getMockBuilder(Request::class)
@@ -53,9 +53,9 @@ class GroupResolverManagerTest extends TestCase
      */
     public function testSupports()
     {
-        $manager = new GroupResolverManager();
+        $manager = new ResponseGroupResolverManager();
 
-        $resolver = $this->createMock(GroupResolverInterface::class);
+        $resolver = $this->createMock(ResponseGroupResolverInterface::class);
         $resolver->expects($this->once())
            ->method('supports')
            ->willReturn(true);
@@ -74,9 +74,9 @@ class GroupResolverManagerTest extends TestCase
      */
     public function testSupportsFalse()
     {
-        $manager = new GroupResolverManager();
+        $manager = new ResponseGroupResolverManager();
 
-        $resolver = $this->createMock(GroupResolverInterface::class);
+        $resolver = $this->createMock(ResponseGroupResolverInterface::class);
 
         $this->assertSame($manager, $manager->addResolver($resolver));
 

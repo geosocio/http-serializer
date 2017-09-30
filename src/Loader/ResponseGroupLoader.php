@@ -3,14 +3,14 @@
 namespace GeoSocio\HttpSerializer\Loader;
 
 use GeoSocio\HttpSerializer\Annotation\RequestGroups;
-use GeoSocio\HttpSerializer\GroupResolver\Response\GroupResolverInterface;
+use GeoSocio\HttpSerializer\GroupResolver\ResponseGroupResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Group Loader
  */
-class ResponseGroupLoader extends GroupLoader implements GroupResolverInterface
+class ResponseGroupLoader extends GroupLoader implements ResponseGroupResolverInterface
 {
 
     /**

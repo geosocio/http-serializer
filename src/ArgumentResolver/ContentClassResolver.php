@@ -3,7 +3,7 @@
 namespace GeoSocio\HttpSerializer\ArgumentResolver;
 
 use GeoSocio\HttpSerializer\Event\DeserializeEvent;
-use GeoSocio\HttpSerializer\GroupResolver\Request\GroupResolverInterface;
+use GeoSocio\HttpSerializer\GroupResolver\RequestGroupResolverInterface;
 use GeoSocio\HttpSerializer\Exception\ConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +59,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
     protected $validator;
 
     /**
-     * @var GroupResolverInterface
+     * @var RequestGroupResolverInterface
      */
     protected $groupResolver;
 
@@ -71,7 +71,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
      * @param DecoderInterface $decoder
      * @param EventDispatcherInterface $eventDispatcher
      * @param ValidatorInterface $validator
-     * @param GroupResolverInterface $groupResolver
+     * @param RequestGroupResolverInterface $groupResolver
      */
     public function __construct(
         SerializerInterface $serializer,
@@ -79,7 +79,7 @@ class ContentClassResolver implements ArgumentValueResolverInterface
         DecoderInterface $decoder,
         EventDispatcherInterface $eventDispatcher,
         ValidatorInterface $validator,
-        GroupResolverInterface $groupResolver
+        RequestGroupResolverInterface $groupResolver
     ) {
         $this->serializer = $serializer;
         $this->denormalizer = $denormalizer;

@@ -1,13 +1,13 @@
 <?php
 
-namespace GeoSocio\HttpSerializer\GroupResolver\Request;
+namespace GeoSocio\HttpSerializer\GroupResolver;
 
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Verification Interface.
  */
-interface GroupResolverInterface
+interface RequestGroupResolverInterface
 {
     /**
      * Generate the groups from the object.
