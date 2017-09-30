@@ -95,4 +95,20 @@ class RequestGroupLoaderTest extends GroupLoaderTest
 
         $this->assertEmpty($groups);
     }
+
+    /**
+     * Test Get Response Groups Suports.
+     */
+    public function testSupoorts()
+    {
+        $resolver = $this->createMock(ControllerResolverInterface::class);
+        $reader = $this->createMock(Reader::class);
+        $loader = new RequestGroupLoader($resolver, $reader);
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assertTrue($loader->supports($request, \stdClass::class));
+    }
 }
