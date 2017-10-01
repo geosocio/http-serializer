@@ -77,6 +77,131 @@ class KernelViewListenerTest extends TestCase
     }
 
     /**
+     * Test Kernel View Iterable Listener
+     *
+     * @dataProvider views
+     *
+     * @param string $method
+     */
+    public function testOnKernelViewIterable(string $method)
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $normalizer = $this->createMock(NormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('supportsNormalization')
+            ->willReturn(true);
+
+        $encoder = $this->createMock(EncoderInterface::class);
+        $encoder->expects($this->once())
+            ->method('supportsEncoding')
+            ->willReturn(true);
+
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $groupResolver = $this->createMock(ResponseGroupResolverInterface::class);
+
+        $listener = new KernelViewListener(
+            $serializer,
+            $normalizer,
+            $encoder,
+            $eventDispatcher,
+            $groupResolver
+        );
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->exactly(4))
+            ->method('getRequestFormat')
+            ->willReturn('test');
+        $request->expects($this->once())
+            ->method('getMethod')
+            ->willReturn($method);
+
+        $result = new \ArrayIterator([
+            new \stdClass(),
+        ]);
+
+        $event = $this->createMock(GetResponseForControllerResultEvent::class);
+        $event->expects($this->once())
+            ->method('hasResponse')
+            ->willReturn(false);
+        $event->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
+        $event->expects($this->once())
+            ->method('getControllerResult')
+            ->willReturn($result);
+
+        $response = $listener->onKernelView($event);
+
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Test Kernel View Iterable Listener
+     *
+     * @dataProvider views
+     *
+     * @param string $method
+     */
+    public function testOnKernelViewBadIterable(string $method)
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $normalizer = $this->createMock(NormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('supportsNormalization')
+            ->willReturn(false);
+
+        $encoder = $this->createMock(EncoderInterface::class);
+        $encoder->expects($this->once())
+            ->method('supportsEncoding')
+            ->willReturn(true);
+
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $groupResolver = $this->createMock(ResponseGroupResolverInterface::class);
+
+        $listener = new KernelViewListener(
+            $serializer,
+            $normalizer,
+            $encoder,
+            $eventDispatcher,
+            $groupResolver
+        );
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->exactly(3))
+            ->method('getRequestFormat')
+            ->willReturn('test');
+        $request->expects($this->once())
+            ->method('getMethod')
+            ->willReturn($method);
+
+        $result = [
+            'token' => '12345',
+            'object' => new \stdClass(),
+        ];
+
+        $event = $this->createMock(GetResponseForControllerResultEvent::class);
+        $event->expects($this->once())
+            ->method('hasResponse')
+            ->willReturn(false);
+        $event->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
+        $event->expects($this->once())
+            ->method('getControllerResult')
+            ->willReturn($result);
+
+        $response = $listener->onKernelView($event);
+
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
      * Test Kernel View Listener
      */
     public function testOnKernelViewHasResponse()
