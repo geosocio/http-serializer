@@ -87,6 +87,39 @@ class KernelViewListener
             return null;
         }
 
+        if (is_iterable($result)) {
+            $data = $result;
+
+            // Convert objects to arrays.
+            if ($result instanceof \Traversable) {
+                $data = iterator_to_array($result);
+            }
+
+            // Determine if array is a collection or just a standard array.
+            $bad = array_filter($data, function ($item) use ($request) {
+                if (!is_object($item)) {
+                    return true;
+                }
+
+                if (!$this->normalizer->supportsNormalization($item, $request->getRequestFormat())) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            // If array is a collection and everything can be normalized,
+            // normalize each item before serialization.
+            if (!count($bad)) {
+                $result = array_map(function ($item) use ($request) {
+                    return $this->normalizer->normalize($item, $request->getRequestFormat(), [
+                        'groups' => $this->groupResolver->resolve($request, $item),
+                        'enable_max_depth' => true,
+                    ]);
+                }, $data);
+            }
+        }
+
         // If the normalizer cannot normalize the result, then there is nothing
         // more than can be done without the serializer throwing an exception.
         if (is_object($result) && !$this->normalizer->supportsNormalization($result, $request->getRequestFormat())) {
@@ -103,11 +136,16 @@ class KernelViewListener
                 break;
         }
 
+        $groups = null;
+        if (is_object($result)) {
+            $groups = $this->groupResolver->resolve($request, $result);
+        }
+
         $serializeEvent = new SerializeEvent(
             $result,
             $request->getRequestFormat(),
             [
-                'groups' => $this->groupResolver->resolve($request, $result),
+                'groups' => $groups,
                 'enable_max_depth' => true,
             ],
             $request
