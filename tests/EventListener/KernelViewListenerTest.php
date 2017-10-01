@@ -111,14 +111,16 @@ class KernelViewListenerTest extends TestCase
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $request->expects($this->exactly(3))
+        $request->expects($this->exactly(4))
             ->method('getRequestFormat')
             ->willReturn('test');
         $request->expects($this->once())
             ->method('getMethod')
             ->willReturn($method);
 
-        $result = new \stdClass();
+        $result = new \ArrayIterator([
+            new \stdClass(),
+        ]);
 
         $event = $this->createMock(GetResponseForControllerResultEvent::class);
         $event->expects($this->once())
