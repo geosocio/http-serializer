@@ -2,7 +2,7 @@
     "name": "geosocio/http-serializer",
     "description": "Serializes a Controller Request & Response",
     "type": "library",
-    "license": "LGPL-3",
+    "license": "LGPL-3.0-only",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
