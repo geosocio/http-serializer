@@ -5,15 +5,26 @@ namespace GeoSocio\HttpSerializer\Serializer;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 
 /**
  * Exception Normalizer
  */
-class ConstraintViolationNormalizer implements NormalizerInterface, NormalizerAwareInterface
+class ConstraintViolationNormalizer implements NormalizerInterface
 {
-    use NormalizerAwareTrait;
+    /**
+     * @var NameConverterInterface|null
+     */
+    protected $nameConverter;
+
+    /**
+     * Constraint Violoation Normalizer
+     *
+     * @param NameConverterInterface|null $nameConverter
+     */
+    public function __construct(?NameConverterInterface $nameConverter = null)
+    {
+        $this->nameConverter = $nameConverter;
+    }
 
     /**
      * {@inheritdoc}
@@ -23,10 +34,10 @@ class ConstraintViolationNormalizer implements NormalizerInterface, NormalizerAw
 
         // Convert the peroperty paths so they match the serialization.
         $propertyPath = $object->getPropertyPath();
-        if ($this->normalizer && $this->normalizer->nameConverter instanceof NameConverterInterface) {
+        if ($this->nameConverter) {
             $properties = explode('.', $propertyPath);
             $properties = array_map(function ($property) {
-                return $this->normalizer->nameConverter->normalize($property);
+                return $this->nameConverter->normalize($property);
             }, $properties);
             $propertyPath = implode('.', $properties);
         }
@@ -37,9 +48,9 @@ class ConstraintViolationNormalizer implements NormalizerInterface, NormalizerAw
             'code' => $object->getCode(),
         ];
 
-        if ($this->normalizer && $this->normalizer->nameConverter instanceof NameConverterInterface) {
+        if ($this->nameConverter) {
             foreach ($data as $key => $value) {
-                $normalized[$this->normalizer->nameConverter->normalize($key)] = $value;
+                $normalized[$this->nameConverter->normalize($key)] = $value;
             }
         } else {
             $normalized = $data;
